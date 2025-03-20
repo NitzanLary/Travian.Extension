@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Travian Raid Analyzer</title>
+  <style>
+    /* Basic styling for the tabbed interface */
+    body { font-family: Arial, sans-serif; margin: 10px; }
+    .tabs { overflow: hidden; background: #f1f1f1; }
+    .tabs button { background: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 10px 16px; transition: 0.3s; }
+    .tabs button:hover { background: #ddd; }
+    .tabs button.active { background: #ccc; }
+    .tabcontent { display: none; padding: 10px; border-top: none; }
+    .tabcontent.active { display: block; }
+  </style>
+</head>
+<body>
+  <h1>Travian Raid Analyzer</h1>
+  <div class="tabs">
+    <button class="tablinks" data-tab="troopsByTime">Troops by Time</button>
+    <button class="tablinks" data-tab="arrivalTime">Arrival Time by Units</button>
+    <button class="tablinks" data-tab="allResources">All Resources</button>
+    <button class="tablinks" data-tab="villageData">Village Data</button>
+  </div>
+
+  <div id="troopsByTime" class="tabcontent">
+    <h2>Troops by Time</h2>
+    <input type="number" id="timeInput" placeholder="Enter time in seconds" />
+    <button id="analyzeTroops">Analyze</button>
+    <pre id="troopsResult"></pre>
+  </div>
+
+  <div id="arrivalTime" class="tabcontent">
+    <h2>Arrival Time by Units</h2>
+    <label for="unitSelect">Select Unit:</label>
+    <select id="unitSelect">
+      <option value="clubs">Clubs</option>
+      <option value="spearman">Spearman</option>
+      <option value="axeman">Axeman</option>
+      <option value="scout">Scout</option>
+      <option value="paladin">Paladin</option>
+      <option value="knight">Knight</option>
+      <option value="ram">Ram</option>
+      <option value="catapult">Catapult</option>
+      <option value="chief">Chief</option>
+      <option value="settler">Settler</option>
+    </select>
+    <input type="number" id="unitCount" placeholder="Enter number of units" />
+    <button id="analyzeArrival">Analyze Arrival</button>
+    <div id="arrivalResult"></div>
+  </div>
+
+  <div id="allResources" class="tabcontent">
+    <h2>All Resources</h2>
+    <button id="analyzeResources">Show All Resources</button>
+    <pre id="resourcesResult"></pre>
+  </div>
+
+  <div id="villageData" class="tabcontent">
+    <h2>Village Data</h2>
+    <input type="text" id="villageName" placeholder="Enter village name" />
+    <button id="analyzeVillage">Get Village Data</button>
+    <pre id="villageResult"></pre>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

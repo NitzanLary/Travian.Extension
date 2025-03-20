@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "Travian Raid Analyzer",
+    "version": "1.0",
+    "description": "Analyzes incoming raids and shows resource totals within a given time range.",
+    "permissions": ["activeTab", "scripting"],
+    "host_permissions": [
+      "https://*.travian.com/*",
+      "http://*.travian.com/*"
+    ],
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "content_scripts": [
+      {
+        "matches": [
+          "https://*.travian.com/*",
+          "http://*.travian.com/*"
+        ],
+        "js": ["content.js"]
+      }
+    ]
+  }
+  
