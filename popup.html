@@ -18,6 +18,7 @@
   <div class="tabs">
     <button class="tablinks" data-tab="troopsByTime">Troops by Time</button>
     <button class="tablinks" data-tab="arrivalTime">Arrival Time by Units</button>
+    <button class="tablinks" data-tab="resourcesByTime">Resources by Time</button>
     <button class="tablinks" data-tab="allResources">All Resources</button>
     <button class="tablinks" data-tab="villageData">Village Data</button>
   </div>
@@ -47,6 +48,13 @@
     <input type="number" id="unitCount" placeholder="Enter number of units" />
     <button id="analyzeArrival">Analyze Arrival</button>
     <div id="arrivalResult"></div>
+  </div>
+
+  <div id="resourcesByTime" class="tabcontent">
+    <h2>Resources by Time</h2>
+    <input type="number" id="timeInputResources" placeholder="Enter time in seconds" />
+    <button id="analyzeResourcesByTime">Analyze</button>
+    <pre id="resourcesByTimeResult"></pre>
   </div>
 
   <div id="allResources" class="tabcontent">
