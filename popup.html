@@ -21,6 +21,7 @@
     <button class="tablinks" data-tab="resourcesByTime">Resources by Time</button>
     <button class="tablinks" data-tab="allResources">All Resources</button>
     <button class="tablinks" data-tab="villageData">Village Data</button>
+    <button class="tablinks" data-tab="buildingCosts">Building Costs</button>
   </div>
 
   <div id="troopsByTime" class="tabcontent">
@@ -68,6 +69,13 @@
     <input type="text" id="villageName" placeholder="Enter village name" />
     <button id="analyzeVillage">Get Village Data</button>
     <pre id="villageResult"></pre>
+  </div>
+
+  <div id="buildingCosts" class="tabcontent">
+    <h2>Building Costs</h2>
+    <p>Click the button below to accumulate the costs of all selected buildings on the page. (Remember: click on buildings to toggle selection.)</p>
+    <button id="accumulateBuildingCosts">Accumulate Building Costs</button>
+    <pre id="buildingCostsResult"></pre>
   </div>
 
   <script src="popup.js"></script>

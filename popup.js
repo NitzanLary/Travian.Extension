@@ -127,6 +127,19 @@ document.getElementById("analyzeVillage").addEventListener("click", () => {
   });
 });
 
+// ----- New Building Costs tab functionality -----
+document.getElementById("accumulateBuildingCosts").addEventListener("click", () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, { type: "accumulateBuildingCosts" }, function(response) {
+      if (response.error) {
+        document.getElementById("buildingCostsResult").innerText = "Error: " + response.error;
+      } else {
+        document.getElementById("buildingCostsResult").innerText = JSON.stringify(response.totalCosts, null, 2);
+      }
+    });
+  });
+});
+
 // Tab switching functionality
 const tabButtons = document.querySelectorAll(".tablinks");
 const tabContents = document.querySelectorAll(".tabcontent");
@@ -144,4 +157,4 @@ tabButtons.forEach(button => {
 // Activate the first tab by default
 if (tabButtons.length) {
   tabButtons[0].click();
-};
+}
