@@ -197,15 +197,87 @@ function addProductionSum() {
   }
 }
 
-// Initialize both features when the page loads
+// Function to add sum of resources to any page with resourceWrapper elements
+function addResourcesSum() {
+  // Find all resourceWrapper elements
+  const resourceWrappers = document.querySelectorAll("div.inlineIconList.resourceWrapper");
+  
+  if (!resourceWrappers || resourceWrappers.length === 0) return;
+  
+  // Add CSS for the sum icon
+  const sumStyle = document.createElement('style');
+  sumStyle.textContent = `
+    .resourceSum {
+      font-weight: bold;
+      font-style: normal;
+      display: inline-block;
+      text-align: center;
+      width: 18px;
+      height: 18px;
+    }
+  `;
+  document.head.appendChild(sumStyle);
+  
+  resourceWrappers.forEach(wrapper => {
+    // Get all resource elements except cropConsumption
+    const resourceDivs = Array.from(wrapper.querySelectorAll("div.inlineIcon.resource"))
+      .filter(div => {
+        const icon = div.querySelector('i');
+        return icon && icon.className.match(/(?:r[1-4]Big|Crop|Wood|Clay|Iron)/);
+      });
+    
+    let totalResources = 0;
+    
+    // Sum up the resource values
+    resourceDivs.forEach(div => {
+      const valueSpan = div.querySelector('span.value');
+      if (valueSpan) {
+        const value = parseInt(valueSpan.innerText.replace(/[^0-9]/g, '')) || 0;
+        totalResources += value;
+      }
+    });
+    
+    // Check if we already added a sum (to avoid duplicates)
+    const existingSum = wrapper.querySelector('.resources-sum');
+    if (existingSum) {
+      existingSum.querySelector('span.value').innerText = totalResources;
+      return;
+    }
+    
+    // Create a new element for the sum
+    const sumElement = document.createElement('div');
+    sumElement.className = 'inlineIcon resource resources-sum';
+    
+    // Create icon element with sum symbol
+    const iconElement = document.createElement('i');
+    iconElement.className = 'resourceSum';
+    iconElement.textContent = '∑';
+    
+    // Create value span
+    const valueSpan = document.createElement('span');
+    valueSpan.className = 'value value'; // Match the double 'value value' class
+    valueSpan.innerText = totalResources;
+    
+    // Assemble the element
+    sumElement.appendChild(iconElement);
+    sumElement.appendChild(valueSpan);
+    
+    // Add to the wrapper
+    wrapper.appendChild(sumElement);
+  });
+}
+
+// Initialize all features when the page loads
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initBuildingSelection();
     addProductionSum();
+    addResourcesSum();
   });
 } else {
   initBuildingSelection();
   addProductionSum();
+  addResourcesSum();
 }
 
 // Listen for messages from the popup as before (if needed for other functionalities)
