@@ -366,19 +366,123 @@ function addUnitImprovementValues() {
   });
 }
 
-// Initialize all features when the page loads
+// Function to add sum of resources in the stockBar
+function addStockBarResourcesSum() {
+  // Find the stockBar element
+  const stockBar = document.getElementById('stockBar');
+  if (!stockBar) return;
+  
+  // Find all resource buttons (lumber, clay, iron, crop)
+  const resourceButtons = stockBar.querySelectorAll('.stockBarButton[class*="resource"]');
+  if (!resourceButtons || resourceButtons.length === 0) return;
+  
+  let totalResources = 0;
+  
+  // Sum up the resource values
+  resourceButtons.forEach(button => {
+    const valueDiv = button.querySelector('div.value');
+    if (valueDiv) {
+      // Get the raw text value
+      const rawValue = valueDiv.innerText;
+      // Parse the number, removing any non-numeric characters except decimal point
+      const cleanValue = rawValue.replace(/[^\d.]/g, '');
+      
+      // Check if the number has a decimal point
+      let value;
+      if (cleanValue.includes('.')) {
+        // If it has a decimal point, multiply by 1000
+        value = parseFloat(cleanValue) * 1000;
+      } else {
+        // Otherwise keep as is
+        value = parseInt(cleanValue) || 0;
+      }
+      
+      totalResources += value;
+    }
+  });
+  
+  // Format the total with the same formatting as the original values
+  const formattedTotal = Math.floor(totalResources).toLocaleString();
+  
+  // Check if we already added a sum element
+  let sumElement = stockBar.querySelector('.stockBar-resources-sum');
+  
+  if (!sumElement) {
+    // Create a new element that matches the style of the existing stockBarButtons
+    sumElement = document.createElement('a');
+    sumElement.className = 'stockBarButton stockBar-resources-sum';
+    
+    // Create an icon similar to the game's resource icons
+    const iconElement = document.createElement('i');
+    iconElement.style.fontSize = '16px';
+    iconElement.style.fontWeight = 'bold';
+    iconElement.style.display = 'block';
+    iconElement.style.width = '25px';
+    iconElement.style.height = '25px';
+    iconElement.style.margin = '0 auto';
+    iconElement.style.lineHeight = '25px';
+    iconElement.style.textAlign = 'center';
+    iconElement.textContent = '∑';
+    
+    // Create value div that matches the style of the game's resource values
+    const valueDiv = document.createElement('div');
+    valueDiv.className = 'value';
+    valueDiv.style.fontWeight = 'bold';
+    valueDiv.style.color = '#008000'; // Green color for positive values
+    valueDiv.textContent = formattedTotal;
+    
+    // Add a bar box and bar like other resources have
+    const barBox = document.createElement('div');
+    barBox.className = 'barBox';
+    
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    // Set width based on the percentage of total compared to warehouse capacity
+    // Just using a placeholder value for visual consistency
+    bar.style.width = '20%'; 
+    
+    barBox.appendChild(bar);
+    
+    // Assemble the element
+    sumElement.appendChild(iconElement);
+    sumElement.appendChild(valueDiv);
+    sumElement.appendChild(barBox);
+    
+    // Find a good place to insert it - after the last resource button
+    // First check if there's a freeCrop button (which is not a resource<num> button)
+    const freeCropButton = stockBar.querySelector('.stockBarButton:not([class*="resource"])');
+    if (freeCropButton) {
+      // Insert before the freeCrop button
+      freeCropButton.parentNode.insertBefore(sumElement, freeCropButton);
+    } else {
+      // Insert after the last resource button
+      const lastResourceButton = resourceButtons[resourceButtons.length - 1];
+      lastResourceButton.parentNode.insertBefore(sumElement, lastResourceButton.nextSibling);
+    }
+  } else {
+    // Just update the value if the element already exists
+    const valueDiv = sumElement.querySelector('.value');
+    if (valueDiv) {
+      valueDiv.textContent = formattedTotal;
+    }
+  }
+}
+
+// Add this function to your initialization code
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initBuildingSelection();
     addProductionSum();
     addResourcesSum();
     addUnitImprovementValues();
+    addStockBarResourcesSum(); // Add the new function
   });
 } else {
   initBuildingSelection();
   addProductionSum();
   addResourcesSum();
   addUnitImprovementValues();
+  addStockBarResourcesSum(); // Add the new function
 }
 
 // Listen for messages from the popup as before (if needed for other functionalities)
