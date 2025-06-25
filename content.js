@@ -267,17 +267,118 @@ function addResourcesSum() {
   });
 }
 
+// Function to calculate and display improved values for unit research
+function addUnitImprovementValues() {
+  // Only run on the smithy page
+  if (!window.location.href.includes('/build.php?id=') || !window.location.href.includes('&gid=13')) return;
+  
+  // Unit BASE and UPKEEP mappings
+  const unitBaseValues = {
+    'מניף אלה': 40,
+    'לוחם חנית': 60,
+    'סייר': 80,
+    'פלאדין': 100
+    // Add more units as needed
+  };
+  
+  const unitUpkeepValues = {
+    'מניף אלה': 1,
+    'לוחם חנית': 1,
+    'סייר': 1,
+    'פלאדין': 2
+    // Add more units as needed
+  };
+
+  // Function to calculate the improved value
+  function calculateImprovedValue(unitType, level) {
+    const BASE = unitBaseValues[unitType] || 0;
+    const UPKEEP = unitUpkeepValues[unitType] || 0;
+
+    // Formula: improved_value = round(BASE + (BASE + 300 * UPKEEP / 7) * (1.007^LEVEL - 1), 2)
+    const improvedValue = BASE + (BASE + 300 * UPKEEP / 7) * (Math.pow(1.007, level + 1) - 1);
+    console.log(`Calculating improved value for ${unitType} at level ${level + 1}: BASE=${BASE}, UPKEEP=${UPKEEP}, improvedValue=${improvedValue}`);
+    return Math.round(improvedValue * 100) / 100; // Round to 2 decimal places
+  }
+
+  // Find all research elements
+  const researchElements = document.querySelectorAll('div.research');
+
+  researchElements.forEach(element => {
+    // Find the title section
+    const titleSection = element.querySelector('div.title');
+    if (!titleSection) return;
+    
+    // Get the second anchor element which contains the unit name
+    const links = titleSection.querySelectorAll('a');
+    if (links.length < 2) return;
+    
+    // The second link contains the unit name text
+    const unitType = links[1].textContent.trim();
+    
+    // Check if we have data for this unit type
+    if (!unitBaseValues[unitType]) {
+      console.log(`Unit type not in database: ${unitType}`);
+      return;
+    }
+    
+    // Extract level
+    const levelSpan = titleSection.querySelector('span.level');
+    if (!levelSpan) return;
+    
+    const levelMatch = levelSpan.textContent.match(/רמה (\d+)/);
+    if (!levelMatch) return;
+    
+    console.log(`Processing unit: ${unitType}, Level: ${levelMatch[1]}`);
+    
+    const level = parseInt(levelMatch[1], 10);
+    
+    // Calculate improved value
+    const improvedValue = calculateImprovedValue(unitType, level);
+    console.log(`Improved value for ${unitType} at level ${level}: ${improvedValue}`);
+    
+    // Calculate percentage increase
+    const baseValue = unitBaseValues[unitType] || 0;
+    const percentageIncrease = baseValue > 0 ? ((improvedValue / baseValue - 1) * 100).toFixed(2) : 0;
+    
+    // Create or update improved value display
+    let improvedValueElement = element.querySelector('.improved-value');
+    
+    if (!improvedValueElement) {
+      improvedValueElement = document.createElement('div');
+      improvedValueElement.className = 'improved-value';
+      improvedValueElement.style.marginTop = '5px';
+      improvedValueElement.style.fontWeight = 'bold';
+      improvedValueElement.style.color = '#008000'; // Green color
+      
+      // Insert after resource wrapper
+      const infoDiv = element.querySelector('.information');
+      if (infoDiv) {
+        const ctaDiv = infoDiv.querySelector('.cta');
+        if (ctaDiv) {
+          infoDiv.insertBefore(improvedValueElement, ctaDiv);
+        } else {
+          infoDiv.appendChild(improvedValueElement);
+        }
+      }
+    }
+    
+    improvedValueElement.textContent = `Improved Value: ${improvedValue} (+${percentageIncrease}%)`;
+  });
+}
+
 // Initialize all features when the page loads
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initBuildingSelection();
     addProductionSum();
     addResourcesSum();
+    addUnitImprovementValues();
   });
 } else {
   initBuildingSelection();
   addProductionSum();
   addResourcesSum();
+  addUnitImprovementValues();
 }
 
 // Listen for messages from the popup as before (if needed for other functionalities)
